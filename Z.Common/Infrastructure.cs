@@ -8,13 +8,19 @@ using Microsoft.Practices.ServiceLocation;
 using log4net.Config;
 using System.IO;
 using Z.Common.Logging;
+using System.Threading;
 
 namespace Z.Common
 {
     public class Infrastructure
     {
+        private static int _loaded = 0;
+
         public static void Load()
         {
+            if (Interlocked.CompareExchange(ref _loaded, 1, 0) == 1)
+                return;
+
             LoadLog4Net();
             LoadStructureMap();
         }

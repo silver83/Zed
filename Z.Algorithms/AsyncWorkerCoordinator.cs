@@ -7,7 +7,10 @@ using Z.Common.Logging;
 
 namespace Z.Algorithms
 {
-    //role is to manage a queue, dequeue work items, and raise events
+    /// <summary>
+    /// role is to manage a queue, dequeue work items, and raise events
+    /// </summary>
+    /// <typeparam name="T"></typeparam> 
     public class AsyncWorkerCoordinator<T> : IDisposable
     {
         private static readonly string _runningStateError =

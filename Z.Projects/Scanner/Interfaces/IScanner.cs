@@ -10,6 +10,6 @@ namespace Z.Projects.Scanner
         IEnumerable<IScanClue<T>> CluesToSearch { get; }
 
         //Scan the stream to find matching clues
-        IEnumerable<IScanClue<T>> Scan(IEnumerable<T> input);
+        IEnumerable<KeyValuePair<IScanClue<T>, T>> Scan(IEnumerable<T> input);
     }
 }

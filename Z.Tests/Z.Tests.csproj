@@ -76,11 +76,17 @@
   <ItemGroup>
     <Compile Include="AsyncCoordinator.cs" />
     <Compile Include="DynamicDuckTests.cs" />
+    <Compile Include="ProjectTests.cs" />
     <Compile Include="ScannerTests.cs" />
     <Compile Include="StringExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceVerificationTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Z.Algorithms\Z.Algorithms.csproj">
+      <Project>{ABC43431-7752-4DF2-BDFD-7C322AAF9AD0}</Project>
+      <Name>Z.Algorithms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Z.Common\Z.Common.csproj">
       <Project>{D892B612-8DF4-43F1-AC01-654BA30F3F6B}</Project>
       <Name>Z.Common</Name>

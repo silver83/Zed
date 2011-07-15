@@ -9,27 +9,6 @@ namespace Z.Common.Runtime
 {
 #warning DynamicDuckFactory missing support for out/in/ref parameters, operator overloading methods and generics
 
-    public interface IA
-    {
-        int MyProperty { get; set; }
-    }
-
-    public class Dummy
-    {
-        private IA _dummy;
-
-        public int MyProperty
-        {
-            get { return _dummy.MyProperty; }
-            set { _dummy.MyProperty = value; }
-        }
-
-        public Dummy(IA dummy)
-        {
-            _dummy = dummy;
-        }
-    }
-
     /// <summary>
     /// Generates types dyanmically that are proxy wrappers to another type, lowering dependencies
     /// </summary>
@@ -77,26 +56,30 @@ namespace Z.Common.Runtime
             GenCtor(newTypeBuilder, tWrapped, wrappedBuilder);
 
             Dictionary<string, PropertyBuilder> props = new Dictionary<string, PropertyBuilder>();
-            foreach (var method in methodsToImplement)
+            foreach (var methodToImplement in methodsToImplement)
             {
                 //copy the method signature, implement as a call to _wrapped
-                Type[] paramTypes = method.GetParameters().Select(x => x.ParameterType).ToArray();
+                Type[] paramTypes = methodToImplement.GetParameters().Select(x => x.ParameterType).ToArray();
                 if (paramTypes.Length == 0)
                     paramTypes = Type.EmptyTypes;
 
-                if (method.IsSpecialName)
+                if (methodToImplement.IsSpecialName)
                 {
-                    MethodBuilder methodBuilder = newTypeBuilder.DefineMethod(method.Name, propAttributes, method.CallingConvention, method.ReturnType, paramTypes);
+                    MethodBuilder methodBuilder = newTypeBuilder.DefineMethod(methodToImplement.Name, propAttributes, methodToImplement.CallingConvention, methodToImplement.ReturnType, paramTypes);
 
-                    if (method.Name.StartsWith("get_"))
-                        GenGetter(newTypeBuilder, tWrapped, wrappedBuilder, props, method, methodBuilder);
-                    else if (method.Name.StartsWith("set_"))
-                        GenSetter(newTypeBuilder, tWrapped, wrappedBuilder, props, method, methodBuilder);
+                    if (methodToImplement.Name.StartsWith("get_"))
+                        //T get_Prop()
+                        GenGetter(newTypeBuilder, tWrapped, wrappedBuilder, props, methodToImplement, methodBuilder);
+                    
+                    else if (methodToImplement.Name.StartsWith("set_"))
+                        //set_Prop(value)
+                        GenSetter(newTypeBuilder, tWrapped, wrappedBuilder, props, methodToImplement, methodBuilder);
                 }
                 else
                 {
-                    MethodBuilder methodBuilder = newTypeBuilder.DefineMethod(method.Name, methodAttributes, method.CallingConvention, method.ReturnType, paramTypes);
-                    GenMethod(tWrapped, wrappedBuilder, method, methodBuilder);
+                    //T Method(type1 arg, type2 arg,..... params type3[] args)
+                    MethodBuilder methodBuilder = newTypeBuilder.DefineMethod(methodToImplement.Name, methodAttributes, methodToImplement.CallingConvention, methodToImplement.ReturnType, paramTypes);
+                    GenMethod(tWrapped, wrappedBuilder, methodToImplement, methodBuilder);
                 }
             }
 
@@ -105,14 +88,39 @@ namespace Z.Common.Runtime
             return retVal;
         }
 
-        private static void GenMethod(Type tWrapped, FieldBuilder wrappedBuilder, MethodInfo method, MethodBuilder methodBuilder)
+        private static void GenMethod(Type tWrapped, FieldBuilder wrappedBuilder, MethodInfo methodToImplement, MethodBuilder methodBuilder)
+        {
+            //generate all parameters for method
+            ParameterInfo[] parameters = methodToImplement.GetParameters();
+
+            //(t1 arg1, t2 arg2, params t3[] args)
+            GenMethodParameters(parameters, methodBuilder);
+
+            ILGenerator methodILGen = methodBuilder.GetILGenerator();
+
+            methodILGen.Emit(OpCodes.Ldarg_0);                  //load current object to stack            
+            methodILGen.Emit(OpCodes.Ldfld, wrappedBuilder);    //using current object, load reference of _wrapped to stack
+            for (short j = 1; j < parameters.Length + 1; j++)   //load parameters to stack
+                methodILGen.Emit(OpCodes.Ldarg, j);
+
+            Type[] parameterTypes = parameters.Select(x => x.ParameterType).ToArray();
+            var wrappedMethod = tWrapped.GetMethod(methodToImplement.Name, BindingFlags.Public | BindingFlags.Instance, null, parameterTypes, null);
+
+                                                                //perform call on _wrapped, leaving any pushed return value on stack
+            methodILGen.EmitCall(OpCodes.Callvirt, wrappedMethod, parameterTypes); 
+            methodILGen.Emit(OpCodes.Ret);
+        }
+
+        private static void GenMethodParameters(ParameterInfo[] parameters, MethodBuilder methodBuilder)
         {
             int i = 1;
-            ParameterInfo[] parameters = method.GetParameters();
+            
             foreach (ParameterInfo pInfo in parameters)
             {
                 ParameterBuilder paramBuilder = null;
                 object[] customAttribs = pInfo.GetCustomAttributes(true);
+
+                //support for params arg
                 if (customAttribs.Length > 0)
                 {
                     foreach (var attrib in customAttribs)
@@ -131,32 +139,19 @@ namespace Z.Common.Runtime
                     paramBuilder = methodBuilder.DefineParameter(i++, pInfo.Attributes, pInfo.Name);
                 }
             }
-
-            ILGenerator methodILGen = methodBuilder.GetILGenerator();
-            methodILGen.Emit(OpCodes.Ldarg_0);
-            methodILGen.Emit(OpCodes.Ldfld, wrappedBuilder);
-            for (short j = 1; j < parameters.Length + 1; j++)
-            {
-                methodILGen.Emit(OpCodes.Ldarg, j);
-            }
-
-            Type[] parameterTypes = parameters.Select(x => x.ParameterType).ToArray();
-            var wrappedMethod = tWrapped.GetMethod(method.Name, BindingFlags.Public | BindingFlags.Instance, null, parameterTypes, null);
-            methodILGen.EmitCall(OpCodes.Callvirt, wrappedMethod, parameters.Select(x => x.ParameterType).ToArray());
-            methodILGen.Emit(OpCodes.Ret);
         }
 
         private static void GenSetter(TypeBuilder newTypeBuilder, Type tWrapped, FieldBuilder wrappedBuilder, Dictionary<string, PropertyBuilder> definedprops, MethodInfo methodToGen, MethodBuilder methodBuilder)
         {
             var methodIL = methodBuilder.GetILGenerator();
-            string propName = methodToGen.Name.Substring(4);
+            string propName = methodToGen.Name.Substring(4);                       //set_PropName()
             var propType = methodToGen.GetParameters()[0].ParameterType;
             var propTypes = new Type[] { propType };
             var wrappedMethod = tWrapped.GetMethod(methodToGen.Name, BindingFlags.Public | BindingFlags.Instance);
-            methodIL.Emit(OpCodes.Ldarg_0);
-            methodIL.Emit(OpCodes.Ldfld, wrappedBuilder);
-            methodIL.Emit(OpCodes.Ldarg_1);
-            methodIL.EmitCall(OpCodes.Callvirt, wrappedMethod, propTypes);
+            methodIL.Emit(OpCodes.Ldarg_0);                                         //load current object to stack
+            methodIL.Emit(OpCodes.Ldfld, wrappedBuilder);                           //using current object, load reference of _wrapped to stack
+            methodIL.Emit(OpCodes.Ldarg_1);                                         //load 'value' reference to stack
+            methodIL.EmitCall(OpCodes.Callvirt, wrappedMethod, propTypes);          //call setter of _wrapped.PropName
             methodIL.Emit(OpCodes.Ret);
 
             PropertyBuilder propBuilder = null;
@@ -169,14 +164,15 @@ namespace Z.Common.Runtime
         private static void GenGetter(TypeBuilder newTypeBuilder, Type tWrapped, FieldBuilder wrappedBuilder, Dictionary<string, PropertyBuilder> definedprops, MethodInfo methodToGen, MethodBuilder methodBuilder)
         {
             var methodIL = methodBuilder.GetILGenerator();
-            string propName = methodToGen.Name.Substring(4); var propType = methodToGen.ReturnType;
+            string propName = methodToGen.Name.Substring(4);                        //get_PropName()
+            var propType = methodToGen.ReturnType;
             var propTypes = new Type[] { propType };
             var wrappedMethod = tWrapped.GetMethod(methodToGen.Name, BindingFlags.Public | BindingFlags.Instance);
 
-            methodIL.Emit(OpCodes.Ldarg_0);
-            methodIL.Emit(OpCodes.Ldfld, wrappedBuilder);
-            methodIL.EmitCall(OpCodes.Callvirt, wrappedMethod, Type.EmptyTypes);
-            methodIL.Emit(OpCodes.Ret);
+            methodIL.Emit(OpCodes.Ldarg_0);                                         //load current object to stack
+            methodIL.Emit(OpCodes.Ldfld, wrappedBuilder);                           //using current object, load reference of _wrapped to stack
+            methodIL.EmitCall(OpCodes.Callvirt, wrappedMethod, Type.EmptyTypes);    //call getter of _wrapped.PropName
+            methodIL.Emit(OpCodes.Ret);                                             //return, leaving any values pushed by _wrapped.get_PropName() on stack
 
             PropertyBuilder propBuilder = null;
             if (!definedprops.TryGetValue(propName, out propBuilder))

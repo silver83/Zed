@@ -10,7 +10,7 @@ namespace Z.Projects.Scanner
     {
         public BaseStreamScanner(IEnumerable<IScanClue<T>> cluesToSearch) : base(cluesToSearch) { }
 
-        public IEnumerable<IScanClue<T>> Scan(Stream inputStream)
+        public IEnumerable<KeyValuePair<IScanClue<T>, T>> Scan(Stream inputStream)
         {
             return base.Scan(LoadStream(inputStream));
         }

@@ -9,6 +9,7 @@ using Z.Common;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml;
+using Z.Projects.Scanner;
 
 namespace Z
 {
@@ -28,7 +29,13 @@ namespace Z
             Infrastructure.Load();
             Log.Application.Info("Message");
 
+            //IClueRepository repo = ServiceLocator.Current.GetInstance<IClueRepository>();
+            //IEnumerable<IScanClue<string>> clues = repo.CluesForScanner(typeof(FileNameScanner));
+            //FileNameScanner scanner = new FileNameScanner(clues);
 
+
+            //scanner.Scan();
+            
             //IScanner Scaner;
             //Scanr.Clues = new List<IScanClue>();
 
@@ -47,6 +54,9 @@ namespace Z
             //CSharpProj:FileExtention("*.csproj")
             //CSharpConfig:File("*.config", CSharpProj)
             //ConnectionString:XmlTag("<connectionString>{0}</connectionString>", CSharpConfig)
+        
+        
+            //first - find problems with refs/endpoints/queues
         }
     }
 }

@@ -13,14 +13,15 @@ namespace Z.Tests
         [Test]
         public void Extension_Csproj_Matched()
         {
-            var filenameClues = new List<IScanClue<string>>();
-            filenameClues.Add(new FileNameScanClue("*.csproj"));
+            var filenameClues = new List<IScanClue<string>>() { new FileNameScanClue("*.csproj") };
             FileNameScanner scanner = new FileNameScanner(filenameClues);
 
-
-            List<string> fileNames = new List<string>();
-            fileNames.Add("");
-            scanner.Scan(fileNames);
+            List<string> fileNames = new List<string>() { "moshe.csproj" };
+            IEnumerable<KeyValuePair<IScanClue<string>, string>> found = scanner.Scan(fileNames);
+            foreach (var item in found)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }
