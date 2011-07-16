@@ -27,6 +27,7 @@ namespace Z
         static void Main(string[] args)
         {
             Infrastructure.Load();
+
             Log.Application.Info("Message");
 
             //IClueRepository repo = ServiceLocator.Current.GetInstance<IClueRepository>();
