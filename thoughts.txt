@@ -1,0 +1,11 @@
+* generically define dependencies
+* dep may define a relationship
+* projects have components
+* component = .netConfig/StructuremapConfig/IIS mapping/winservice record/
+* must identify file types ! (structure map configuration/.net configuration/other) generically
+* must provide fuzzy match allowing user intervension (I think its either structuremap or ninject, tell me)
+* dep definition should be simple
+* deps I want to verify:
+	* wcf endpoints
+	* msmq queues
+	* assembly refs (from config or from dll meta)
