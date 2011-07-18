@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using Z.Common.Logging;
 
-namespace Z.Projects.Scanner
+namespace Z.Scanner
 {
     public abstract class BaseScanner<T> : IScanner<T>
     {

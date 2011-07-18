@@ -9,7 +9,8 @@ using Z.Common;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml;
-using Z.Projects.Scanner;
+using Z.Projects;
+using Z.Scanner;
 
 namespace Z
 {
@@ -17,6 +18,11 @@ namespace Z
 
     class Program
     {
+        private static void Usage()
+        {
+            Console.WriteLine("Z [directory path]");
+        }
+
         /// <summary>
         /// Zed is an Environment Validation tool, allowing deployment validation - alerts and fast editing for unknown host/connectionstring/endpoint etc
         /// * scan a deployment root, detecting components (projects)
@@ -27,15 +33,12 @@ namespace Z
         static void Main(string[] args)
         {
             Infrastructure.Load();
+            //ScanClues.Load();
 
-            Log.Application.Info("Message");
-
-            //IClueRepository repo = ServiceLocator.Current.GetInstance<IClueRepository>();
-            //IEnumerable<IScanClue<string>> clues = repo.CluesForScanner(typeof(FileNameScanner));
             //FileNameScanner scanner = new FileNameScanner(clues);
-
-
-            //scanner.Scan();
+            //ProjectScanner scanner = new ProjectScanner();
+            //scanner.Scan(
+            ////scanner.Scan();
             
             //IScanner Scaner;
             //Scanr.Clues = new List<IScanClue>();

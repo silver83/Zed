@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z.Common", "Z.Common\Z.Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z.Algorithms", "Z.Algorithms\Z.Algorithms.csproj", "{ABC43431-7752-4DF2-BDFD-7C322AAF9AD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z.Scanner", "Z.Scanner\Z.Scanner.csproj", "{D4D2A54C-749C-4877-ACCD-71B3AB524C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{ABC43431-7752-4DF2-BDFD-7C322AAF9AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABC43431-7752-4DF2-BDFD-7C322AAF9AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABC43431-7752-4DF2-BDFD-7C322AAF9AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D2A54C-749C-4877-ACCD-71B3AB524C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D2A54C-749C-4877-ACCD-71B3AB524C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D2A54C-749C-4877-ACCD-71B3AB524C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D2A54C-749C-4877-ACCD-71B3AB524C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

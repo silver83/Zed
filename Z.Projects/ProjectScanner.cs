@@ -3,37 +3,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Z.Projects.Scanner;
 using System.IO;
+using Z.Scanner;
 
 namespace Z.Projects
 {
-    public interface IScanClueProvider
-    {
-        IEnumerable<IScanClue<T>> GetScanClues<T>(Type t);
-    }
-
     /// <summary>
     /// Takes a directory and finds projects
     /// </summary>
-    public class ProjectScanner
+    public class ProjectManager
     {
-        public IEnumerable<IProject> Scan(string directory, IScanClueProvider scanClueProvider)
+        public IEnumerable<IProject> FindProjects(string directory, BaseScanner<string> scanner)
         {
-            IEnumerable<IScanClue<string>> clues = scanClueProvider.GetScanClues<string>(typeof(FileNameScanner));
-            IEnumerable<string> files = ScanDirectory(directory);
-
-            FileNameScanner scanner = new FileNameScanner(clues);
-            var matchedClues = scanner.Scan(files); 
+            var files = GetDirScanner(directory);
+            var matchedClues = scanner.Scan(files);
+            LinkedList<List<string>> paths = new LinkedList<List<string>>();
+            
             foreach (var matchedClue in matchedClues)
             {
-                Console.WriteLine(matchedClue);
+                
             }
 
             yield break;
         }
 
-        private IEnumerable<string> ScanDirectory(string directory)
+        private IEnumerable<string> GetDirScanner(string directory)
         {
             string[] files = Directory.GetFiles(directory);
             foreach (var file in files)
@@ -41,7 +35,7 @@ namespace Z.Projects
 
             string[] subdirs = Directory.GetDirectories(directory);
             foreach (var dir in subdirs)
-                foreach (var file in ScanDirectory(dir))
+                foreach (var file in GetDirScanner(dir))
                     yield return file;
         }
     }

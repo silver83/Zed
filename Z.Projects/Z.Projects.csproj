@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Z.Projects</RootNamespace>
     <AssemblyName>Z.Projects</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,16 +67,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Configuration\BaseConfigurationComponent.cs" />
+    <Compile Include="Components\Configuration\IConfigurationComponent.cs" />
+    <Compile Include="Components\Configuration\XmlConfigurationComponent.cs" />
+    <Compile Include="Components\IProjectComponent.cs" />
+    <Compile Include="Dependencies\IDependency.cs" />
+    <Compile Include="Dependencies\IDependencyExtractor.cs" />
+    <Compile Include="Dependencies\IDepenedencyExtractorProvider.cs" />
     <Compile Include="IProjectManager.cs" />
+    <Compile Include="BaseProject.cs" />
     <Compile Include="ProjectScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scanner\Base\BaseScanner.cs" />
-    <Compile Include="Scanner\Base\BaseStreamScanner.cs" />
-    <Compile Include="Scanner\Clues\FilenameScanClue.cs" />
-    <Compile Include="Scanner\FileNameScanner.cs" />
-    <Compile Include="Scanner\Interfaces\IScanClue.cs" />
-    <Compile Include="Scanner\Interfaces\IScanner.cs" />
-    <Compile Include="Scanner\XmlScanner.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -99,7 +101,12 @@
       <Project>{D892B612-8DF4-43F1-AC01-654BA30F3F6B}</Project>
       <Name>Z.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Z.Scanner\Z.Scanner.csproj">
+      <Project>{D4D2A54C-749C-4877-ACCD-71B3AB524C02}</Project>
+      <Name>Z.Scanner</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

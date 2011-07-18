@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Z.Projects.Scanner
+namespace Z.Scanner
 {
     public interface IScanner<T>
     {

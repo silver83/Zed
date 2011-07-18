@@ -5,8 +5,9 @@ using System.Text;
 using NUnit.Framework;
 using System.IO;
 using Rhino.Mocks;
-using Z.Projects.Scanner;
 using Z.Projects;
+using Z.Scanner;
+using Z.Scanner.Clues;
 
 namespace Z.Tests
 {
@@ -20,14 +21,10 @@ namespace Z.Tests
             dir = Directory.GetParent(dir).Parent.FullName;
 
             List<IScanClue<string>> clues = new List<IScanClue<string>>() { new FileNameScanClue("*.csproj") };
+            FileNameScanner fileNameScanner = new FileNameScanner(clues);
 
-            IScanClueProvider provider = MockRepository.GenerateMock<IScanClueProvider>();
-            provider.Expect(x=>provider.GetScanClues<string>(typeof(string)))
-                .IgnoreArguments()
-                .Return(clues);
-
-            ProjectScanner scanner = new ProjectScanner();
-            IEnumerable<IProject> projects = scanner.Scan(dir, provider);
+            ProjectManager scanner = new ProjectManager();
+            IEnumerable<IProject> projects = scanner.FindProjects(dir, fileNameScanner);
             projects.ToList();
 
             //pipeline :

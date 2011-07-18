@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Z.Projects.Scanner
+namespace Z.Scanner
 {
     public abstract class BaseStreamScanner<T> : BaseScanner<T>
     {
