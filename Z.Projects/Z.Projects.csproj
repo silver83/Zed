@@ -75,7 +75,7 @@
     <Compile Include="Dependencies\IDependencyExtractor.cs" />
     <Compile Include="Dependencies\IDepenedencyExtractorProvider.cs" />
     <Compile Include="IProjectManager.cs" />
-    <Compile Include="BaseProject.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="ProjectScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -10,7 +10,6 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml;
 using Z.Projects;
-using Z.Scanner;
 
 namespace Z
 {
