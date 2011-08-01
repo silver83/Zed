@@ -10,11 +10,11 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml;
 using Z.Projects;
+using Z.Scanner;
+using Z.Projects.Components;
 
 namespace Z
 {
-
-
     class Program
     {
         private static void Usage()
@@ -32,34 +32,39 @@ namespace Z
         static void Main(string[] args)
         {
             Infrastructure.Load();
-            //ScanClues.Load();
+            IResourceIdFactory resourceIdFactory = new ResourceIdFactory();
+            IComponentFactory componentFactory = new ComponentFactory();
+            var projectManager = new ProjectManager();
+            var builders = projectManager.CreateProjectBuilders(@"E:\products\Services", resourceIdFactory, componentFactory);
 
-            //FileNameScanner scanner = new FileNameScanner(clues);
-            //ProjectScanner scanner = new ProjectScanner();
-            //scanner.Scan(
-            ////scanner.Scan();
-            
-            //IScanner Scaner;
-            //Scanr.Clues = new List<IScanClue>();
+            foreach (var builder in builders)
+            {
+                builder.PopulateProjectComponents();
+                IProject project = builder.Project;
+            }
 
-            //FileScanner scanner = new FileScanner(path, clues);
-            //scanner.scan();
-            //IProjectManager manager = ServiceLocator.Current.GetInstance<IProjectManager>();            
-            //IProjectManager manager = ServiceLocation.
-            //IEnumerable<Project> = ScanDirectory(rootDir);
+            //var depsManager = new DependencyManager();
+            //var deps = depsManager.Extract(projects);
+            //depsManager.Verify(deps);
+            //depsManager.Save(deps);
+
+            //find configuration files and detect their type
+            //according to type extract dependencies
+            //verify dependencies and persist
 
 
-            //scan for projects, so that we know for each project its environemnt-dependant configuration (endpoint hosts and methods, connectionStrings, etc)
-            //file scanning should be a one-off, throwing events for expected tags/lines
+            //var componentFactory = ServiceLocator.Current.GetInstance<IComponentFactory>();
 
-            //web csproj with webservice endpoints Scan flow
+            //var fileUris = files.Select(x => new ComponentURI(x));
 
-            //CSharpProj:FileExtention("*.csproj")
-            //CSharpConfig:File("*.config", CSharpProj)
-            //ConnectionString:XmlTag("<connectionString>{0}</connectionString>", CSharpConfig)
-        
-        
-            //first - find problems with refs/endpoints/queues
+            //Configuration.ConfigTypes
+
+            ////identify and add configuration components
+            //var components = componentFactory.CreateComponents(files, x => filtered.Add(x));
+
+            //project.AddComponents(components);
         }
+
+       
     }
 }

@@ -53,6 +53,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Infrastructure\Products\Entlib\5.0\bin\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -67,16 +71,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Configuration\BaseConfigurationComponent.cs" />
-    <Compile Include="Components\Configuration\IConfigurationComponent.cs" />
-    <Compile Include="Components\Configuration\XmlConfigurationComponent.cs" />
+    <Compile Include="Components\ComponentFactory.cs" />
+    <Compile Include="Components\Configuration\Base\BaseConfigurationComponent.cs" />
+    <Compile Include="Components\Configuration\Base\IConfigurationComponent.cs" />
+    <Compile Include="Components\Configuration\Base\XmlConfigurationComponent.cs" />
     <Compile Include="Components\IProjectComponent.cs" />
+    <Compile Include="Components\Configuration\StructureMapConfigurationComponent.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Dependencies\IDependency.cs" />
     <Compile Include="Dependencies\IDependencyExtractor.cs" />
     <Compile Include="Dependencies\IDepenedencyExtractorProvider.cs" />
-    <Compile Include="IProjectManager.cs" />
+    <Compile Include="IProject.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="ProjectScanner.cs" />
+    <Compile Include="ProjectBuilder.cs" />
+    <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +114,6 @@
       <Name>Z.Scanner</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

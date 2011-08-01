@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Z.Projects.Components;
 using System.IO;
+using Z.Scanner;
 
 namespace Z.Projects
 {
@@ -11,10 +12,9 @@ namespace Z.Projects
     {
         private List<IProjectComponent> _components;
         private List<IProjectRelationship> _relationships;
-        private string _name = "[UnknownProject]";
-        private string _path;
+        private ResourceId _resourceId;
 
-
+        public ProjectBuilder Builder { get; set; }
         public IEnumerable<IProjectComponent> Components
         {
             get
@@ -33,19 +33,21 @@ namespace Z.Projects
                 return _relationships;
             }
         }
-        public string Name
+        public ResourceId ResourceId { get; set; }
+
+        public Project(ResourceId resourceId)
         {
-            get 
-            {
-                if (_name == null)
-                    _name = Path.GetFileName(_path);
-                return _name;
-            }
+            _resourceId = resourceId;
         }
 
-        public Project(string path)
+        public void AddComponents(IEnumerable<IProjectComponent> components)
         {
-            _path = path;
+            (Components as List<IProjectComponent>).AddRange(components);
         }
+
+        public void AddComponent(IProjectComponent component)
+        {
+            (Components as List<IProjectComponent>).Add(component);
+        }        
     }
 }

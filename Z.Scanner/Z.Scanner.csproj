@@ -40,6 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResourceId.cs" />
+    <Compile Include="ResourceIdFactory.cs" />
+    <Compile Include="ResourceSet.cs" />
+    <Compile Include="ResourceType.cs" />
+    <Compile Include="Constraints\IConfigTypeConstraint.cs" />
+    <Compile Include="Constraints\XmlConfigTypeConstraint.cs" />
+    <Compile Include="Filters\FileExtensionFilter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
+    <Compile Include="Filters\MultiFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
