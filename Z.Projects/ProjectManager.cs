@@ -24,29 +24,58 @@ namespace Z.Projects
     /// </summary>
     public class ProjectManager
     {
-        private static List<string> PrefixExclusions = new List<string>() { "." };
-        
+        private static List<string> PrefixExclusions = new List<string>() { ".", "Backup" };
+
         /// <summary>
-        /// Each subdir of <paramref name="directory"/> is considered a project.
+        /// Each subdir of <paramref name="rootDirectory"/> is considered a project.
         /// </summary>
-        /// <param name="directory">the root path to start scanning from</param>
+        /// <param name="rootDirectory">the root path to start scanning from</param>
         /// <param name="scanner">the scanner to use</param>
         /// <returns></returns>
-        public IEnumerable<ProjectBuilder> CreateProjectBuilders(string directory, IResourceIdFactory resourceIdFactory, IComponentFactory componentFactory)
+        public IEnumerable<ProjectBuilder> CreateProjectBuilders(string rootDirectory, IResourceIdFactory resourceIdFactory, IComponentFactory componentFactory)
         {
-            foreach (var dir in Directory.GetDirectories(directory))
+            foreach (var dir in GetProjectDirectories(rootDirectory))
             {
                 if (IsExcluded(dir))
                     continue;
 
                 var filter = new MultiFilter<string>(Configuration.FileFilters);
                 ProjectBuilder builder = new ProjectBuilder(dir, filter, resourceIdFactory, componentFactory);
-               
+
                 yield return builder;
             }
         }
-                
-        private bool IsExcluded(string dir)
+
+        private IEnumerable<string> GetProjectDirectories(string directory)
+        {
+            foreach (var subdir in Directory.GetDirectories(directory))
+            {
+                if (IsExcluded(subdir))
+                    continue;
+                if (IsProject(subdir))
+                    yield return subdir;
+                else
+                    foreach (var subDirProject in GetProjectDirectories(subdir))
+                        yield return subDirProject;
+            }
+        }
+
+        private static bool IsProject(string subdir)
+        {
+            string dirName = Path.GetFileName(subdir);
+            string[] endings = new string[] { ".exe", ".exe.config", ".dll", ".dll.config" };
+            endings = endings.Select(x => string.Format("{0}{1}", dirName, x)).ToArray();
+
+            var hasExeAndConfig = (from f in Directory.GetFiles(subdir)
+                                   from e in endings
+                                   where f.EndsWith(e)
+                                   select f).Count();
+
+            var isProject = hasExeAndConfig >= 2;
+            return isProject;
+        }
+
+        private static bool IsExcluded(string dir)
         {
             string fileName = Path.GetFileName(dir);
             foreach (var pattern in PrefixExclusions)

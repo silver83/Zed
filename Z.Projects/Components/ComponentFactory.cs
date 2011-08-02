@@ -11,7 +11,8 @@ namespace Z.Projects.Components
     {
         public IProjectComponent CreateComponent(string path, Tuple<ResourceId, ResourceType> typedResource)
         {
-            return new StructureMapConfigurationComponent(typedResource.Item1);
+            var resourceType = typedResource.Item2;
+            return (IProjectComponent)Activator.CreateInstance(resourceType.ComponentType, typedResource.Item1);
         }
     }
 }

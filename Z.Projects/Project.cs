@@ -33,7 +33,7 @@ namespace Z.Projects
                 return _relationships;
             }
         }
-        public ResourceId ResourceId { get; set; }
+        public ResourceId ResourceId { get { return _resourceId; } }
 
         public Project(ResourceId resourceId)
         {

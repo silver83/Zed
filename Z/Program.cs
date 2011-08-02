@@ -31,17 +31,30 @@ namespace Z
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            string rootDir = @"E:\products\Services";
+
             Infrastructure.Load();
             IResourceIdFactory resourceIdFactory = new ResourceIdFactory();
             IComponentFactory componentFactory = new ComponentFactory();
             var projectManager = new ProjectManager();
-            var builders = projectManager.CreateProjectBuilders(@"E:\products\Services", resourceIdFactory, componentFactory);
+            var builders = projectManager.CreateProjectBuilders(rootDir, resourceIdFactory, componentFactory);
 
+            List<IProject> projects = new List<IProject>();
             foreach (var builder in builders)
             {
                 builder.PopulateProjectComponents();
-                IProject project = builder.Project;
+                projects.Add(builder.Project);
             }
+
+            foreach (var proj in projects)
+            {
+                Console.WriteLine(proj.ResourceId.Uri.LocalPath.Replace(rootDir, ""));
+                foreach (var comp in proj.Components)
+                {
+                    Console.WriteLine("\t" + comp.ResourceId.Uri.AbsoluteUri.Replace(proj.ResourceId.Uri.AbsoluteUri, ""));
+                }
+            }
+            Console.ReadKey();
 
             //var depsManager = new DependencyManager();
             //var deps = depsManager.Extract(projects);

@@ -64,8 +64,19 @@ namespace Z.Projects
             structureMapTypeConstraints.Add(new XmlConfigTypeConstraint("StructureMap"));
             var structureMapConfigType = new ResourceType(typeof(StructureMapConfigurationComponent), structureMapTypeConstraints);
 
+            //create dotnet type
+            var netConfigTypeConstraints = new List<IResourceTypeConstraint>();
+            netConfigTypeConstraints.Add(new XmlConfigTypeConstraint("configuration"));
+
+            var constraint = ("[filename]".AsHasSiblingConstraint().Or(
+                              "(.*)/web.config$".AsUriRegexConstraint())).And("^((?!vshost).)*$".AsUriRegexConstraint());
+
+            netConfigTypeConstraints.Add(constraint);
+            var netConfigConfigType = new ResourceType(typeof(DotNetConfigurationComponent), netConfigTypeConstraints);
+
             //add types
             AddTypeToLists(types, typesBySchema, structureMapConfigType);
+            AddTypeToLists(types, typesBySchema, netConfigConfigType);
 
             _resourceTypes = types;
             _resourceTypesBySchema = typesBySchema;
